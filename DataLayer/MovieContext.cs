@@ -1,6 +1,6 @@
 ﻿using DataLayer.Models;
+using DataLayer.Services;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 
 namespace DataLayer
 {
@@ -11,10 +11,12 @@ namespace DataLayer
         }
 
         public DbSet<Bookmark> Bookmarks { get; set; }
+        public DbSet<BestMatchResults> BestMatchResults { get; set; }  // Add this line
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // No need to configure here if you're using dependency injection
+            // Map the BestMatchResult to the query results without creating a table
+            modelBuilder.Entity<BestMatchResults>().HasNoKey();
         }
     }
 }

@@ -1,4 +1,7 @@
+// Program.cs
 using DataLayer;
+using DataLayer.Models;
+using DataLayer.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,8 +15,10 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<MovieContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("MovieDatabase")));
 
-// Register DatabaseTest as a transient service
+// Register services
 builder.Services.AddTransient<DatabaseTest>();
+builder.Services.AddTransient<BookmarkService>();
+builder.Services.AddTransient<SearchService>();  // Register the SearchService
 
 var app = builder.Build();
 
@@ -28,11 +33,17 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
 
-// Test database connection
+// Test the SearchService BestMatch function
 using (var scope = app.Services.CreateScope())
 {
-    var dbTest = scope.ServiceProvider.GetRequiredService<DatabaseTest>();
-    dbTest.TestConnection();
+    var searchService = scope.ServiceProvider.GetRequiredService<SearchService>();
+    var results = await searchService.BestMatchAsync("beaumont", "bertrand"); // Test keywords
+
+    foreach (var result in results)
+    {
+        Console.WriteLine($"Ranking: {result.Ranking}, Movie ID: {result.movie_id}, Movie Title: {result.movie_title}");
+    }
 }
+
 
 app.Run();

@@ -16,10 +16,10 @@ namespace DataLayer.Models
         [Column("item_type")]
         public char ItemType { get; set; }
 
-        [Column("annotation")]
-        public string? Annotation { get; set; }
-
         [Column("item_id")]
         public string ItemId { get; set; }
+
+        [Column("annotation")]
+        public string? Annotation { get; set; }
     }
 }
